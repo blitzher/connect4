@@ -1,0 +1,38 @@
+body {
+	background-color: #282a36;
+}
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.wrapper {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	vertical-align: middle;
+}
+
+#app {
+	width: 75%;
+	height: 75%;
+	margin: 0 auto;
+	border: 2px solid #e8e8e8;
+	border-radius: 50px;
+	padding: 50px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+}
+
+#app * {
+	margin: 0 auto;
+}
+
+h1, h2, p {
+	color: #e8e8e8;
+	max-width: min-content;
+	margin: 0 auto;
+}
