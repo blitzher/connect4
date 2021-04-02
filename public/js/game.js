@@ -9,11 +9,48 @@ const numY = 6;
 let xScale = 0;
 let yScale = 0;
 
-const board = [];
+let state = {};
+let board = [];
 for (let i = 0; i < numY; i++) board.push([]);
 
-board[0][0] = 2
-board[2][5] = 1
+const _wl = window.location;
+export const ws = new WebSocket(`ws://${_wl.host}${_wl.pathname}`);
+ws.onopen = () => {
+	console.log("connected");
+};
+
+ws.onmessage = (msg) => {
+	console.log(msg);
+}
+
+ws.onclose = () => {
+	console.log("disconnected")
+}
+
+function drawGrid(canvas, ctx) {
+	ctx.strokeStyle = "#FFFFFF";
+	ctx.lineWidth = 3
+	/* draw horizontal line */
+	for (let row = 1; row < numY; row++) {
+		let dy = row * yScale;
+
+		ctx.beginPath();
+		ctx.moveTo(0, dy);
+		ctx.lineTo(canvas.width, dy)
+		ctx.stroke();
+		
+	};
+
+	/* draw vertical line */
+	for (let col = 1; col < numX; col++) {
+		let dx = col * xScale;
+
+		ctx.beginPath();
+		ctx.moveTo(dx, 0);
+		ctx.lineTo(dx, canvas.height);
+		ctx.stroke();
+	}
+}
 
 export function resizeCanvas(canvas) {
 	const app = document.getElementById('app');
@@ -38,26 +75,59 @@ export function resizeCanvas(canvas) {
 }
 
 export function init(canvas, ctx) {
-	bg.onload = () => ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-	bg.src = `res/bg.png`;
-	bl.src = `res/bl.png`;
-	rd.src = `res/rd.png`;
+	bl.src = `res/bl.svg`;
+	rd.src = `res/rd.svg`;
+	resizeCanvas(canvas);
+}
+
+function screenToGrid(x, y) {
+	const gridX = Math.floor(x / xScale);
+	const gridY = Math.floor(y / yScale);
+
+	return { x : gridX, y : gridY};
+
+}
+
+export function eventHandler(event) {
+	const left = event.button === 0;
+	const right = event.button === 2;
+	
+	const screenX = event.layerX;
+	const screenY = event.layerY;
+
+	const {x, y} = screenToGrid(screenX, screenY)
+
+	const move = {
+		id : state.id,
+		column : x
+	}
+
+	ws.send(JSON.stringify(move))
+
+};
+
+export function socketHandler(raw) {
+	const obj = JSON.parse(raw.data);
+	
+	state = obj;
+	board = obj.board;
 }
 
 export function redraw(canvas, ctx) {
-	ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
-
+	
 	for (let row = 0; row < numY; row++) {
 		for (let col = 0; col < numX; col++) {
 			const el = board[row][col];
-
-			if (el === 2) 
-				ctx.drawImage(bl, col * xScale, row * yScale, xScale, yScale);
 			
-			else if (el === 1) 
-				ctx.drawImage(rd, col * xScale, row * yScale, xScale, yScale)
+			if (el === 1) 
+			ctx.drawImage(rd, col * xScale, row * yScale, xScale, yScale)
+			
+			else if (el === 2) 
+			ctx.drawImage(bl, col * xScale, row * yScale, xScale, yScale);
+			
 			
 		};
 	};
+	drawGrid(canvas, ctx);
 }
 

@@ -10,12 +10,16 @@ function setupCanvas(el) {
 }
 const $ = (id) => document.getElementById(id);
 
-const ws = new WebSocket(`ws://${window.location.host}`);
-
-ws.onopen = () => {
+game.ws.onopen = () => {
 	console.log("connected");
-	ws.send("ur mum")
 };
+
+game.ws.onmessage = game.socketHandler;
+
+game.ws.onclose = () => {
+	console.log("disconnected")
+	window.location.reload();
+}
 
 const { canvas, ctx } = setupCanvas("canvas");
 canvas.oncontextmenu = function (e) { e.preventDefault(); e.stopPropagation(); }
@@ -25,5 +29,8 @@ window.addEventListener('resize', () => {
 	game.resizeCanvas(canvas);
 	game.redraw(canvas, ctx);
 });
+
+canvas.addEventListener("click", game.eventHandler)
+canvas.addEventListener("contextmenu", game.eventHandler)
 
 setInterval( () => game.redraw(canvas, ctx), 1000 / 60)
