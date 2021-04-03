@@ -2,17 +2,10 @@ const { json } = require("express");
 const express = require("express");
 const app = express();
 const expressWs = require("express-ws")(app);
+const util = require("./util");
 
 const port = 8080;
 
-const boards = {
-	/* id : {
-		id,
-		players: [],
-		board,
-		turn,
-	} */
-}
 
 function newId() {
 	let num = Math.floor(Math.random() * 1000);
@@ -40,18 +33,6 @@ function newBoard(id, sock1, sock2) {
 	}
 }
 
-function dropDownColumn(game, col) {
-	console.log(game);
-	for (let row = game.board.length ; row > 0 ; row--) {
-		if ( game.board[row][col] === 0) {
-			game.board[row][col] = game.board.turn + 1;
-			game.turn = game.turn ? 0 : 1;
-
-			return true;
-		}
-	}
-	return false;
-}
 
 app.use('/connect4', express.static("./public"));
 app.use('/connect4/:id', express.static("./public"));
@@ -72,12 +53,12 @@ app.ws('/connect4/:id', (ws, req) => {
 	
 	const gameId = Number.parseInt(req.params.id);
 
-	if (boards[gameId] && boards[gameId].players[1] === undefined) {
+	if (util.boards[gameId] && util.boards[gameId].players[1] === undefined) {
 		console.log("connecting new player to existing board");
-		boards[gameId].players[1] = ws;
+		util.boards[gameId].players[1] = ws;
 	}
 
-	else if (boards[gameId]) {
+	else if (util.boards[gameId]) {
 		console.log("connecting spectator to existing board");
 		
 	}
@@ -85,31 +66,17 @@ app.ws('/connect4/:id', (ws, req) => {
 	else {
 		console.log("making new board ");
 		const board = newBoard(gameId, ws)
-		boards[gameId] = board;
+		util.boards[gameId] = board;
 	}
 	/* in all three cases, send the game at index to player */
-	const game = {
-		id : gameId,
-		board : boards[gameId].board,
-		turn : boards[gameId].turn
-	}
-	ws.send(JSON.stringify(game));
+	ws.send(util.reformatBoard(util.boards[gameId],
+		ws === util.boards[gameId].players[util.boards[gameId].turn]));
 
 	ws.on('message', (msg) => {
-		console.log(msg);
-		const move = JSON.parse(msg);
-		const board = boards[move.id];
-
-		if (!board) return;
-
-		if ( board.players.indexOf(ws) === board.turn) {
-			dropDownColumn(board, move.column)
-
-		}
-
-
+		util.handle(msg, ws);
 	})
 })
+
 
 
 app.listen(port, () => {

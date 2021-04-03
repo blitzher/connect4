@@ -30,7 +30,14 @@ window.addEventListener('resize', () => {
 	game.redraw(canvas, ctx);
 });
 
-canvas.addEventListener("click", game.eventHandler)
-canvas.addEventListener("contextmenu", game.eventHandler)
+canvas.addEventListener("click", game.clickHandler)
+// right click event listener
+// canvas.addEventListener("contextmenu", game.clickHandler)
+canvas.addEventListener("mousemove", game.moveHandler)
 
 setInterval( () => game.redraw(canvas, ctx), 1000 / 60)
+
+$("reset-btn").onclick = () => {
+	canvas.addEventListener("click", game.clickHandler);
+	game.ws.send(JSON.stringify({type: "reset", id:game.state.id}));
+}

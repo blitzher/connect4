@@ -31,8 +31,27 @@ body {
 	margin: 0 auto;
 }
 
+.sidebar {
+	display : flex;
+	align-items: center;
+	justify-content: center;
+	
+}
+
+label {
+	display: flex;
+	width: 75px;
+	height: 50px;
+	border : 1px solid #e8e8e8;
+	color: #e8e8e8;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
 canvas {
-	border: 5px solid white;
+	border: 5px solid #e8e8e8;
 	border-radius: 10px;
 }
 

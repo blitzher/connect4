@@ -6,10 +6,13 @@ let rd = new Image();
 const numX = 7;
 const numY = 6;
 
+let mpos = {x : -1, y : -1};
+
 let xScale = 0;
 let yScale = 0;
 
-let state = {};
+let turn = false;
+export let state = {};
 let board = [];
 for (let i = 0; i < numY; i++) board.push([]);
 
@@ -28,6 +31,7 @@ ws.onclose = () => {
 }
 
 function drawGrid(canvas, ctx) {
+	
 	ctx.strokeStyle = "#FFFFFF";
 	ctx.lineWidth = 3
 	/* draw horizontal line */
@@ -88,9 +92,7 @@ function screenToGrid(x, y) {
 
 }
 
-export function eventHandler(event) {
-	const left = event.button === 0;
-	const right = event.button === 2;
+export function clickHandler(event) {
 	
 	const screenX = event.layerX;
 	const screenY = event.layerY;
@@ -98,6 +100,7 @@ export function eventHandler(event) {
 	const {x, y} = screenToGrid(screenX, screenY)
 
 	const move = {
+		type : "move",
 		id : state.id,
 		column : x
 	}
@@ -106,15 +109,36 @@ export function eventHandler(event) {
 
 };
 
+export function moveHandler(event) {
+	mpos.x = event.layerX;
+	mpos.y = event.layerY;
+}
+
 export function socketHandler(raw) {
 	const obj = JSON.parse(raw.data);
-	
-	state = obj;
-	board = obj.board;
+	console.log(obj);
+	if (obj.type === "board") {
+		state = obj;
+		board = obj.board;
+
+		if(obj.myturn) {
+			document.getElementById("info").innerHTML = "Your turn"
+		}
+		else {
+			document.getElementById("info").innerHTML = ""
+		}
+	}
+
+	if (obj.type === "win" || obj.type === "lose") {
+		document.getElementById("info").innerText = "You " + obj.type;
+		document.getElementById("canvas").removeEventListener("click", clickHandler);
+	}
 }
 
 export function redraw(canvas, ctx) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	
+	/* draw icons of the grid */
 	for (let row = 0; row < numY; row++) {
 		for (let col = 0; col < numX; col++) {
 			const el = board[row][col];
@@ -128,6 +152,18 @@ export function redraw(canvas, ctx) {
 			
 		};
 	};
+
+	/* draw the grid */
 	drawGrid(canvas, ctx);
+
+	/* draw the column highlight */
+	
+	const col = screenToGrid(mpos.x, mpos.y).x;
+
+	ctx.fillStyle="rgba(255, 255, 255, 0.2)"
+	ctx.beginPath();
+	
+	ctx.rect(col * xScale, 0, xScale, canvas.height);
+	ctx.fill();
 }
 
