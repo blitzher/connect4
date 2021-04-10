@@ -1,0 +1,27 @@
+[
+	{
+		"name": "Town Hall",
+		"cost": {},
+		"produce": {
+			"food": 1
+		}
+	},
+	{
+		"name": "Lumbermill",
+		"cost": {
+			"rock": 10
+		},
+		"produce": {
+			"wood": 1
+		}
+	},
+	{
+		"name": "Quarry",
+		"cost": {
+			"wood": 10
+		},
+		"produce": {
+			"rock": 1
+		}
+	}
+]

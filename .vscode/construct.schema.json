@@ -1,0 +1,101 @@
+{
+	"$schema" : "https://json-schema.org/draft/2020-12/schema",
+	"title" : "Construct",
+	"description": "A construction on a tile",
+	"type" : "array",
+	"items" : {
+		"description" : "A construction",
+		"type" : "object",
+		"properties": {
+			"name" : {
+				"description":"the name of the construction",
+				"type": "string"
+			},
+			"cost" : {
+				"description" : "the cost of the construction",
+				"type": "object",
+				"properties": {
+					"wood" : {
+						"description" : "The wood cost of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"rock" : {
+						"description" : "The rock cost of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"food" : {
+						"description" : "The food cost of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"materials" : {
+						"description" : "The material cost of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"mythril" : {
+						"description" : "The mythril cost of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"favor" : {
+						"description" : "The favor cost of the construction\nDefault to 0",
+						"type" : "number"
+					}
+				}
+			},
+			"produce" : {
+				"description" : "the production of the construction",
+				"type": "object",
+				"properties": {
+					"wood" : {
+						"description" : "The wood production of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"rock" : {
+						"description" : "The rock production of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"food" : {
+						"description" : "The food production of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"materials" : {
+						"description" : "The material production of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"mythril" : {
+						"description" : "The mythril production of the construction\nDefault to 0",
+						"type" : "number"
+					},
+					"favor" : {
+						"description" : "The favor production of the construction\nDefault to 0",
+						"type" : "number"
+					}
+				}
+			},
+			"owner": {
+				"description" : "",
+				"type" : "object",
+				"properties" : {
+					"name" : {
+						"description" : "the name of owner",
+						"type" : "string"
+					},
+					"id" : {
+						"description" : "the id of the owner",
+						"type" : "string"
+					}
+				}
+				
+			},
+			"requires": {
+				"descripton" : "An array of the names of the buildings required for construction",
+				"type" : "array",
+				"items" : {
+					"type" : "string"
+				}
+			}
+		},
+		"required": [
+			"name", "cost", "produce"
+		]
+	}
+}

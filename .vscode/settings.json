@@ -1,0 +1,22 @@
+{
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"*.schema.json"
+			],
+			"url": "https://json-schema.org/draft/2020-12/schema"
+		},
+		{
+			"fileMatch": [
+				"**/constructs.json"
+			],
+			"url": "./.vscode/construct.schema.json"
+		},
+		{
+			"fileMatch": [
+				"**/units.json"
+			],
+			"url": "./.vscode/unit.schema.json"
+		}
+	]
+}
