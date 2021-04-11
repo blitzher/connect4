@@ -1,15 +1,17 @@
 [
 	{
 		"name": "Town Hall",
-		"cost": {},
 		"produce": {
 			"food": 1
-		}
+		},
+		"spawns": [
+			"Farmer"
+		]
 	},
 	{
 		"name": "Lumbermill",
 		"cost": {
-			"rock": 10
+			"stone": 10
 		},
 		"produce": {
 			"wood": 1
@@ -21,7 +23,22 @@
 			"wood": 10
 		},
 		"produce": {
-			"rock": 1
+			"stone": 1
 		}
+	},
+	{
+		"name": "Barrack",
+		"requires": [
+			"Lumbermill",
+			"Quarry"
+		],
+		"cost": {
+			"wood": 10,
+			"stone": 10
+		},
+		"spawns": [
+			"Knight",
+			"Archer"
+		]
 	}
 ]

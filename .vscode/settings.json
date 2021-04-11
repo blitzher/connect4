@@ -17,6 +17,12 @@
 				"**/units.json"
 			],
 			"url": "./.vscode/unit.schema.json"
+		},
+		{
+			"fileMatch": [
+				"**/upgrades.json"
+			],
+			"url": "./.vscode/upgrades.schema.json"
 		}
 	]
 }

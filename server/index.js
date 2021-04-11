@@ -1,9 +1,13 @@
-const WebSocket = require("ws");
+/* import main libraries */
 const express = require('express');
+
+/* initalize app and use express web sockets */
 const app = express();
 const expressWs = require('express-ws')(app);
+
+/*  */
 const manager = require('./manager');
-const { Socket } = require("socket.io");
+const Game = require('./game');
 
 const port = process.argv[2] || 8080;
 
@@ -19,25 +23,34 @@ app.get('/', (req, res) => {
  * a shorthand for sending a json object to a socket
  * @param {Socket} ws the receiving socket
  * @param {object} obj the object containing the data
- * @param {number} status optional status - by default is 200
+ * @param {Number} status optional status - by default is 200
  */
 function send(ws, obj, status) {
-	obj.status = status || 200;
-	ws.send(JSON.stringify(obj)); 
+	obj.status = status;
+	ws.send(JSON.stringify(obj));
 }
 
+const allShards = {}
+
 app.ws('/:id', (ws, req) => {
-	console.log('a user connected to game ', req.params.id);
 
-	ws.on('message', (message) => {
-		const command = manager(message);
+	console.log('a user connected to game:', req.params.id);
+	const shard = allShards[req.params.id] || new Game.Shard(req.params.id);
+	const player = new Game.Player();
 
-		if (!command.valid) {
-			send(ws, {body:'invalid command'}, 400);
-		}
+		ws.on('message', (message) => {
+			const reply = manager(message, shard);
+			
+			/* assign callback ID to reply, if it was valid */
+			reply.callbackId = (reply.valid) ? JSON.parse(message).callbackId : undefined;
 
+			send(ws, reply, (reply.valid) ? 200 : 400)
+		})
 
-	})
+		ws.on('close', () => {
+			console.log('player disconnected from', req.params.id)
+			shard.removePlayer()
+		})
 });
 
 app.listen(port, () => {
